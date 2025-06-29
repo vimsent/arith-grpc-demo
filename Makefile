@@ -3,6 +3,7 @@ PROTO_DIR = proto
 
 # Alias para evitar repetir "docker compose …"
 COMPOSE   = docker compose
+.PHONY: proto   # <-- añade esta línea
 
 # ---------- gRPC / Protobuf ----------
 proto:
