@@ -8,6 +8,7 @@ import (
 	"time"
 
 	pb "github.com/vimsent/arith-grpc-demo/proto"
+
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
