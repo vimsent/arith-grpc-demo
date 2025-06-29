@@ -1,15 +1,18 @@
-# Nombre del directorio con .proto
-PROTO_DIR = proto
+# ---------------- VARIABLES ----------------
+PROTO_DIR := proto
+COMPOSE   := docker compose
 
-# Alias para evitar repetir "docker compose …"
-COMPOSE   = docker compose
-.PHONY: proto   # <-- añade esta línea
+# ---------------- TARGETS ------------------
+.PHONY: proto docker-build docker-up clean \
+        run-processor run-server run-client
 
-# ---------- gRPC / Protobuf ----------
+# Genera *.pb.go en proto/ respetando la ruta fuente
 proto:
-	protoc --go_out=. --go-grpc_out=. $(PROTO_DIR)/*.proto
+	protoc --go_out=paths=source_relative:. \
+	       --go-grpc_out=paths=source_relative:. \
+	       $(PROTO_DIR)/*.proto
 
-# ---------- Ejecutables locales ----------
+# Ejecutables locales (útil para depurar sin Docker)
 run-processor:
 	go run ./cmd/processor
 
@@ -17,19 +20,18 @@ run-server:
 	go run ./cmd/server
 
 run-client:
-	go run ./cmd/client 7 "*" 6
+	go run ./cmd/client 12 "*" 4
 
-# ---------- Docker ----------
-# 1) Borra la caché global de BuildKit
-# 2) Compila todas las imágenes sin usar cache
-docker-build:
+# Construye imágenes SIEMPRE desde cero
+docker-build: proto
+	go mod tidy
 	docker builder prune -f
 	$(COMPOSE) build --no-cache
 
-# 3) Levanta los servicios (siempre recrea)
+# Levanta el stack; depende de docker-build
 docker-up: docker-build
 	$(COMPOSE) up --force-recreate
 
-# ---------- Limpieza ----------
+# Limpieza
 clean:
 	$(COMPOSE) down --remove-orphans
