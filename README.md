@@ -23,6 +23,9 @@ cd arith-grpc-demo
 # (opcional) Regenerar código protobuf
 make proto
 
+# limpiar y sincronizar los archivos go.mod y go.sum.
+go mod tidy 
+
 # Construir imágenes y lanzar todo
 make docker-up
 
