@@ -1,0 +1,32 @@
+version: "3.9"
+
+services:
+  processor:
+    build:
+      context: .
+      dockerfile: Dockerfile.processor
+    container_name: processor
+    ports:
+      - "50052:50052"
+
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile.server
+    container_name: server
+    depends_on:
+      - processor
+    environment:
+      - PROCESSOR_ADDR=processor:50052
+    ports:
+      - "50051:50051"
+
+  client:
+    build:
+      context: .
+      dockerfile: Dockerfile.client
+    container_name: client
+    depends_on:
+      - server
+    # Ejemplo: 12 * 4
+    command: ["12", "*", "4"]

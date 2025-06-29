@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package arithmetic;
+
+option go_package = "github.com/vimsent/arith-grpc-demo/proto;proto";
+
+// Mensaje con la operación a realizar.
+message OperationRequest {
+  double a        = 1;   // Operando A
+  double b        = 2;   // Operando B
+  string operator = 3;   // "+", "-", "*", "/"
+}
+
+// Respuesta con el resultado (o un mensaje de error).
+message OperationResponse {
+  double result = 1;
+  string error  = 2;
+}
+
+/*
+ * Servicio expuesto por el SERVER.
+ * El CLIENT llama a Compute(); el SERVER internamente
+ * reenvía la petición al PROCESSOR y devuelve la respuesta.
+ */
+service OperationService {
+  rpc Compute(OperationRequest) returns (OperationResponse);
+}
+
+/*
+ * Servicio expuesto por el PROCESSOR.
+ * El SERVER es el cliente de este servicio.
+ */
+service ProcessorService {
+  rpc Process(OperationRequest) returns (OperationResponse);
+}
