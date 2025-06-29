@@ -10,6 +10,7 @@ RUN go mod download
 COPY . .
 
 # 3) compilación estática
+RUN go mod download
 RUN CGO_ENABLED=0 go build -o /server ./cmd/server
 
 ################  imagen final mínima  ################
